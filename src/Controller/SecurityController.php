@@ -12,19 +12,6 @@ class SecurityController extends AbstractController
 {
 
     /**
-     * @Route("/", name="homepage")
-     */
-    public function indexAction()
-    {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('task_list');
-        } else {
-            return $this->redirectToRoute('login');
-        }
-
-    }
-
-    /**
      * @Route("/login", name="login")
      */
     public function loginAction(AuthenticationUtils $authenticationUtils)
@@ -47,8 +34,5 @@ class SecurityController extends AbstractController
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout()
-    {
-
-    }
+    public function logout() {}
 }

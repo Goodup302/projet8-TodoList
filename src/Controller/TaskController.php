@@ -12,6 +12,19 @@ use Symfony\Component\HttpFoundation\Request;
 class TaskController extends AbstractController
 {
     /**
+     * @Route("/", name="homepage")
+     */
+    public function indexAction()
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('task_list');
+        } else {
+            return $this->redirectToRoute('login');
+        }
+
+    }
+
+    /**
      * @Route("/tasks-list/{filter}", defaults={"filter": "all"}, name="task_list")
      */
     public function listAction(string $filter)
@@ -19,12 +32,19 @@ class TaskController extends AbstractController
         $repository = $this->getDoctrine()->getRepository(Task::class);
         if ($filter == "done") {
             $tasks = $repository->findBy(['isDone' => true]);
+            $title = "Liste des tâches terminée";
         } else if ($filter == "todo") {
             $tasks = $repository->findBy(['isDone' => false]);
+            $title = "Liste des tâches à faire";
         } else {
             $tasks = $repository->findAll();
+            $title = "Liste de toutes les tâches";
         }
-        return $this->render('task/list.html.twig', ['tasks' => $tasks]);
+        return $this->render('task/list.html.twig', [
+            'tasks' => $tasks,
+            'filter' => $filter,
+            'title' => $title,
+        ]);
     }
 
     /**
@@ -78,6 +98,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
+     * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function toggleTaskAction(Task $task, Request $request)
     {
@@ -93,6 +114,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
+     * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function deleteTaskAction(Task $task, Request $request)
     {

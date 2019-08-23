@@ -2,33 +2,33 @@
     Mettre a jour symfony vers une version, stable 4.4 ✔
 
 
-# Taches
+# Taches :heavy_check_mark:
     - Pour les tâches déjà créées, il faut qu’elles soient rattachées à un utilisateur “anonyme”. ✔
     - Un tâche doit être attachée à un utilisateur ✔
-    - Les tâches rattachées à l’utilisateur “anonyme” ne peuvent être supprimées uniquement par (ROLE_ADMIN).
 
 
-# User
+# User :heavy_check_mark:
     - Ajouter un system de role ✔
-    - Lors de la modification d’un utilisateur, il est également possible de changer le rôle d’un utilisateur.
+    - Lors de la modification d’un utilisateur, il est également possible de changer le rôle d’un utilisateur. ✔
 
 # Autorisation
     - Roles:
         - ROLE_USER (Default role) ✔
         - ROLE_ADMIN ✔
         - ANONYMOUS ✔
-    - Gestion des utilisateurs réserver à (ROLE_ADMIN).
+    - Gestion des utilisateurs réserver à (ROLE_ADMIN). ✔
     - Les tâches rattachées à l’utilisateur “anonyme” ne peuvent être supprimées uniquement par (ROLE_ADMIN).
     - Les tâches ne peuvent être supprimées que par les utilisateurs ayant créé les tâches en questions.
+    - Empécher la connection des utilisateures ANONYMOUS.
    
 
-# Fixtures
+# Fixtures :heavy_check_mark:
     - Prévoire des données de tests emglobant tout les cas explicités dans ce document. ✔
 
 
-# Mise en page
+# Mise en page :heavy_check_mark:
     - Mise à jour de bootstrap. ✔
-    - Corection des incoérence graphique.
+    - Corection des incoérence graphique. ✔
 
 
 # Implementation de tests automatises (test unitaires et fonctionnels)

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des taches{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
     <div class="row pt-2">
@@ -10,6 +10,7 @@
                     <div class="card-body">
                         <h5 class="card-title">
                             <a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a>
+                            <span class="author">auteur {{ task.user.username }}</span>
                             {% if task.isDone %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}
                         </h5>
                         <p class="card-text">{{ task.content }}</p>
