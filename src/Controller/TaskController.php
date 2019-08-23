@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,6 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TaskController extends AbstractController
 {
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
     /**
      * @Route("/", name="homepage")
      */
@@ -25,7 +33,7 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks-list/{filter}", defaults={"filter": "all"}, name="task_list")
+     * @Route("/tasks/{filter}", defaults={"filter": "all"}, name="task_list")
      */
     public function listAction(string $filter)
     {
@@ -48,21 +56,17 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks/create", name="task_create")
+     * @Route("/task/create", name="task_create")
      * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function createAction(Request $request)
     {
         $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
-
-        $form->handleRequest($request);
-
+        $form = $this->createForm(TaskType::class, $task)->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $em->persist($task);
-            $em->flush();
+            $task->setUser($this->getUser());
+            $this->em->persist($task);
+            $this->em->flush();
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
@@ -73,14 +77,12 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks/{id}/edit", name="task_edit")
+     * @Route("/task/{id}/edit", name="task_edit")
      * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function editAction(Task $task, Request $request)
     {
-        $form = $this->createForm(TaskType::class, $task);
-
-        $form->handleRequest($request);
+        $form = $this->createForm(TaskType::class, $task)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
@@ -97,7 +99,7 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks/{id}/toggle", name="task_toggle")
+     * @Route("/task/{id}/toggle", name="task_toggle")
      * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function toggleTaskAction(Task $task, Request $request)
@@ -113,14 +115,13 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/tasks/{id}/delete", name="task_delete")
+     * @Route("/task/{id}/delete", name="task_delete")
      * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function deleteTaskAction(Task $task, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $this->em->remove($task);
+        $this->em->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 

@@ -19,7 +19,7 @@
     - Gestion des utilisateurs réserver à (ROLE_ADMIN). ✔
     - Les tâches rattachées à l’utilisateur “anonyme” ne peuvent être supprimées uniquement par (ROLE_ADMIN).
     - Les tâches ne peuvent être supprimées que par les utilisateurs ayant créé les tâches en questions.
-    - Empécher la connection des utilisateures ANONYMOUS.
+    - Empécher la connection des utilisateures ANONYMOUS. ✔
    
 
 # Fixtures :heavy_check_mark:

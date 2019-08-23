@@ -21,22 +21,27 @@
                 </a>
                 <div class="navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item dropdown active">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Liste des tâches
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="{{ path('task_list') }}">Toutes les tâches</a>
-                                <a class="dropdown-item" href="{{ path('task_list', {'filter': "todo"}) }}">Tâches à faire</a>
-                                <a class="dropdown-item" href="{{ path('task_list', {'filter': "done"}) }}">Tâches terminée</a>
-                            </div>
-                        </li>
-                        <li class="nav-item active">
-                            <a href="{{ path('task_create') }}" class="nav-link">Créer une tâche</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a href="{{ path('user_list') }}" class="nav-link">Gestion des utilisateurs</a>
-                        </li>
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <li class="nav-item dropdown active">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Liste des tâches
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="{{ path('task_list') }}">Toutes les tâches</a>
+                                    <a class="dropdown-item" href="{{ path('task_list', {'filter': "todo"}) }}">Tâches à faire</a>
+                                    <a class="dropdown-item" href="{{ path('task_list', {'filter': "done"}) }}">Tâches terminée</a>
+                                </div>
+                            </li>
+                            <li class="nav-item active">
+                                <a href="{{ path('task_create') }}" class="nav-link">Créer une tâche</a>
+                            </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="nav-item active">
+                                    <a href="{{ path('user_list') }}" class="nav-link">Gestion des utilisateurs</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+
                         <li class="nav-item">
                             {% if app.user %}
                                 <a href="{{ path('logout') }}" class="nav-link text-danger">Se déconnecter</a>

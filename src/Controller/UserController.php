@@ -9,9 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @IsGranted("ROLE_ADMIN"))
- */
 class UserController extends AbstractController
 {
     /**
