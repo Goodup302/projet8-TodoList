@@ -15,10 +15,11 @@ class SecurityController extends AbstractController
      */
     public function loginAction(AuthenticationUtils $authenticationUtils)
     {
+        //Disalow connection for ANONYMOUS User
         $securityContext = $this->container->get('security.authorization_checker');
         /** @var User $user */
         $user = $this->getUser();
-        if ($user && $securityContext->isGranted(Role::ADMIN)) return $this->redirectToRoute('logout');
+        if ($user && $securityContext->isGranted(Role::ANONYMOUS)) return $this->redirectToRoute('logout');
 
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
