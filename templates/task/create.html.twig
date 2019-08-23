@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Créer une tache{% endblock %}
+
 {% block body %}
     {{ form_start(form, {'attr' : {'class': 'col-12'}}) }}
         {{ form_widget(form) }}

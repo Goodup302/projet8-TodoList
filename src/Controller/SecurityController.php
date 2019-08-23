@@ -10,6 +10,20 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+
+    /**
+     * @Route("/", name="homepage")
+     */
+    public function indexAction()
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('task_list');
+        } else {
+            return $this->redirectToRoute('login');
+        }
+
+    }
+
     /**
      * @Route("/login", name="login")
      */

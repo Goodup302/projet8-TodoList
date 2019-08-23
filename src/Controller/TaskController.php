@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TaskController extends AbstractController
 {
     /**
-     * @Route("/tasks/{filter}", defaults={"filter": "all"}, name="task_list")
+     * @Route("/tasks-list/{filter}", defaults={"filter": "all"}, name="task_list")
      */
     public function listAction(string $filter)
     {
