@@ -26,6 +26,11 @@
     - Prévoire des données de tests emglobant tout les cas explicités dans ce document. ✔
 
 
+# Mise en page
+    - Mise à jour de bootstrap. ✔
+    - Corection des incoérence graphique.
+
+
 # Implementation de tests automatises (test unitaires et fonctionnels)
     - Utiliser ces outils suivants: PHPUnit/Behat/bridge symfony
     - Code coverage soit supérieur à 70%.

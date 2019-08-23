@@ -12,11 +12,16 @@ use Symfony\Component\HttpFoundation\Request;
 class TaskController extends AbstractController
 {
     /**
-     * @Route("/tasks", name="task_list")
+     * @Route("/tasks/{filter}", defaults={"filter": "all"}, name="task_list")
      */
-    public function listAction()
+    public function listAction(string $filter)
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository(Task::class)->findAll()]);
+        if ($filter == "done") {
+            $tasks = $this->getDoctrine()->getRepository(Task::class)->findBy(['isDone' => true]);
+        } else {
+            $tasks = $this->getDoctrine()->getRepository(Task::class)->findAll();
+        }
+        return $this->render('task/list.html.twig', ['tasks' => $tasks]);
     }
 
     /**
