@@ -16,10 +16,13 @@ class TaskController extends AbstractController
      */
     public function listAction(string $filter)
     {
+        $repository = $this->getDoctrine()->getRepository(Task::class);
         if ($filter == "done") {
-            $tasks = $this->getDoctrine()->getRepository(Task::class)->findBy(['isDone' => true]);
+            $tasks = $repository->findBy(['isDone' => true]);
+        } else if ($filter == "todo") {
+            $tasks = $repository->findBy(['isDone' => false]);
         } else {
-            $tasks = $this->getDoctrine()->getRepository(Task::class)->findAll();
+            $tasks = $repository->findAll();
         }
         return $this->render('task/list.html.twig', ['tasks' => $tasks]);
     }
@@ -76,7 +79,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
      */
-    public function toggleTaskAction(Task $task)
+    public function toggleTaskAction(Task $task, Request $request)
     {
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
@@ -84,13 +87,14 @@ class TaskController extends AbstractController
         $status = $task->isDone() ? "faite" : "non terminée";
         $this->addFlash('success', "La tâche {$task->getTitle()} a bien été marquée comme $status.");
 
-        return $this->redirectToRoute('task_list');
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
     }
 
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task)
+    public function deleteTaskAction(Task $task, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($task);
@@ -98,6 +102,7 @@ class TaskController extends AbstractController
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
-        return $this->redirectToRoute('task_list');
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
     }
 }
