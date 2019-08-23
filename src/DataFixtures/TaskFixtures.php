@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Role;
 use App\Entity\Task;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -30,6 +31,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
             $task->setContent("Content");
             $task->setCreatedAt(new \DateTime());
             $task->setTitle("Task $i");
+            $task->setUser($this->getReference(UserFixtures::class.Role::ANONYMOUS));
             $task->toggle(rand(0, 1));
             $manager->persist($task);
         }

@@ -22,6 +22,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $this->setReference(self::class."0", $admin);
         $manager->persist($admin);
 
+        $anonymous = new User();
+        $anonymous->setEmail("anonymous@todolist.fr");
+        $anonymous->setPassword($this->encoder->encodePassword($anonymous, uniqid(uniqid(), true)));
+        $anonymous->setUsername("Anonyme");
+        $anonymous->setRole($this->getReference(Role::ANONYMOUS));
+        $this->setReference(self::class.Role::ANONYMOUS, $anonymous);
+        $manager->persist($anonymous);
+
         for ($i = 1; $i < $this->iteration; $i++) {
             $user = new User();
             $user->setEmail("user.$i@todolist.fr");

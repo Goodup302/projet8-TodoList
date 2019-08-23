@@ -13,6 +13,7 @@ class Role
 {
     const USER = "ROLE_USER";
     const ADMIN = "ROLE_ADMIN";
+    const ANONYMOUS = "ANONYMOUS";
 
     /**
      * @ORM\Id()
@@ -30,6 +31,11 @@ class Role
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="role")
      */
     private $users;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $label;
 
     public function __construct()
     {
@@ -80,6 +86,18 @@ class Role
                 $user->setRole(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }

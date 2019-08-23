@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -14,6 +15,11 @@ class SecurityController extends AbstractController
      */
     public function loginAction(AuthenticationUtils $authenticationUtils)
     {
+        $securityContext = $this->container->get('security.authorization_checker');
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user && $securityContext->isGranted(Role::ADMIN)) return $this->redirectToRoute('logout');
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
@@ -24,18 +30,10 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/login_check", name="login_check")
-     */
-    public function loginCheck()
-    {
-        // This code is never executed.
-    }
-
-    /**
      * @Route("/logout", name="logout")
      */
-    public function logoutCheck()
+    public function logout()
     {
-        // This code is never executed.
+
     }
 }
