@@ -152,17 +152,14 @@ class TaskController extends AbstractController
         return $this->redirect($request->headers->get('referer'));
     }
 
-
-    //TODO Les admin non pas le droit d'éditer les tache hors ADMIN et anonymes
     public function taskProtection(Task $task): bool
     {
         /** @var User $user */
         $user = $this->getUser();
-        if ($user->getRoleName() === Role::ADMIN || $task->getUser()->getId() === $user->getId()) {
-            return true;
-        } else {
-            $this->addFlash('error', self::PERMISSION_DENY);
-            return false;
-        }
+        $userTask = $task->getUser();
+        if ($userTask->getId() === $user->getId()) return true;
+        if ($user->getRoleName() === Role::ADMIN && $userTask->getRoleName() === Role::ANONYMOUS) return true;
+        $this->addFlash('error', self::PERMISSION_DENY);
+        return false;
     }
 }
