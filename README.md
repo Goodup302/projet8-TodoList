@@ -5,7 +5,8 @@ Base du projet #8 : Améliorez un projet existant
 https://openclassrooms.com/projects/ameliorer-un-projet-existant-1
 
 
-
+Code coverage cmd:  
+bin/phpunit --coverage-html codecoverage/
 
 Osteoform symfony 4  application
 
