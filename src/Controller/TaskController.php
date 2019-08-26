@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Entity\Task;
+use App\Entity\User;
 use App\Form\TaskType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -12,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TaskController extends AbstractController
 {
+    const PERMISSION_DENY = "Vous n'avez pas la permission pour réaliser cette action.";
+
     private $em;
 
     public function __construct(EntityManagerInterface $em)
@@ -76,26 +80,34 @@ class TaskController extends AbstractController
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
     }
 
+
+    ///////////////////////
+    // UPDATE TASK ROUTE //
+    ///////////////////////
+
+
     /**
      * @Route("/task/{id}/edit", name="task_edit")
      * @IsGranted("IS_AUTHENTICATED_FULLY"))
      */
     public function editAction(Task $task, Request $request)
     {
-        $form = $this->createForm(TaskType::class, $task)->handleRequest($request);
+        if ($this->taskProtection($task)) {
+            //Form
+            $form = $this->createForm(TaskType::class, $task)->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->em->flush();
+                $this->addFlash('success', 'La tâche a bien été modifiée.');
+                return $this->redirectToRoute('task_list');
+            }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', 'La tâche a bien été modifiée.');
-
-            return $this->redirectToRoute('task_list');
+            return $this->render('task/edit.html.twig', [
+                'form' => $form->createView(),
+                'task' => $task,
+            ]);
+        } else {
+            return $this->redirect($request->headers->get('referer'));
         }
-
-        return $this->render('task/edit.html.twig', [
-            'form' => $form->createView(),
-            'task' => $task,
-        ]);
     }
 
     /**
@@ -104,14 +116,14 @@ class TaskController extends AbstractController
      */
     public function toggleTaskAction(Task $task, Request $request)
     {
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
-
-        $status = $task->isDone() ? "faite" : "non terminée";
-        $this->addFlash('success', "La tâche {$task->getTitle()} a bien été marquée comme $status.");
-
-        $referer = $request->headers->get('referer');
-        return $this->redirect($referer);
+        if ($this->taskProtection($task)) {
+            $task->toggle(!$task->isDone());
+            $this->em->flush();
+            //Flash alert
+            $status = $task->isDone() ? "faite" : "non terminée";
+            $this->addFlash('success', "La tâche {$task->getTitle()} a bien été marquée comme $status.");
+        }
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -120,12 +132,23 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task, Request $request)
     {
-        $this->em->remove($task);
-        $this->em->flush();
+        if ($this->taskProtection($task)) {
+            $this->em->remove($task);
+            $this->em->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        }
+        return $this->redirect($request->headers->get('referer'));
+    }
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
-
-        $referer = $request->headers->get('referer');
-        return $this->redirect($referer);
+    public function taskProtection(Task $task): bool
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user->getRoleName() === Role::ADMIN || $task->getUser()->getId() === $user->getId()) {
+            return true;
+        } else {
+            $this->addFlash('error', self::PERMISSION_DENY);
+            return false;
+        }
     }
 }

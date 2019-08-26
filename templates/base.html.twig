@@ -17,7 +17,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{{ path('homepage') }}">
                     <img src="{{ asset('favicon.ico') }}" height="30" class="d-inline-block align-top" alt="OpenClassrooms">
-                    To Do List
+                    To Do List {% if is_granted('IS_AUTHENTICATED_FULLY') %}| <span class="author">connecté avec ({{ app.user.username }})</span>{% endif %}
                 </a>
                 <div class="navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">

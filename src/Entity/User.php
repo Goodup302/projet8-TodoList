@@ -110,6 +110,11 @@ class User implements UserInterface
         return $this->role;
     }
 
+    public function getRoleName(): ?String
+    {
+        return $this->getRole()->getName();
+    }
+
     public function setRole(?Role $role): self
     {
         $this->role = $role;
