@@ -41,15 +41,27 @@ class TaskController extends AbstractController
      */
     public function listAction(string $filter)
     {
-        $repository = $this->getDoctrine()->getRepository(Task::class);
+        /** @var User $user */
+        $user = $this->getUser();
+        $repositoryTask = $this->getDoctrine()->getRepository(Task::class);
+        if ($user->getRoleName() === Role::ADMIN) {
+            $repositoryRole = $this->getDoctrine()->getRepository(Role::class);
+            $repositoryUser = $this->getDoctrine()->getRepository(User::class);
+            $anonymousRole = $repositoryRole->findOneBy(['name' => Role::ANONYMOUS]);
+            $anonymousUser = $repositoryUser->findOneBy(['role' => $anonymousRole]);
+            $userFilter = [$user, $anonymousUser];
+        } else {
+            $userFilter = [$user];
+        }
+
         if ($filter == "done") {
-            $tasks = $repository->findBy(['isDone' => true]);
+            $tasks = $repositoryTask->findBy(['isDone' => true, 'user' => $userFilter]);
             $title = "Liste des tâches terminée";
         } else if ($filter == "todo") {
-            $tasks = $repository->findBy(['isDone' => false]);
+            $tasks = $repositoryTask->findBy(['isDone' => false, 'user' => $userFilter]);
             $title = "Liste des tâches à faire";
         } else {
-            $tasks = $repository->findAll();
+            $tasks = $repositoryTask->findBy(['user' => $userFilter]);
             $title = "Liste de toutes les tâches";
         }
         return $this->render('task/list.html.twig', [
@@ -140,6 +152,8 @@ class TaskController extends AbstractController
         return $this->redirect($request->headers->get('referer'));
     }
 
+
+    //TODO Les admin non pas le droit d'éditer les tache hors ADMIN et anonymes
     public function taskProtection(Task $task): bool
     {
         /** @var User $user */

@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table("user")
  * @ORM\Entity
  * @UniqueEntity("email")
+ * @UniqueEntity("username")
  */
 class User implements UserInterface
 {
@@ -30,7 +31,8 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $password;
 
@@ -43,6 +45,7 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Role", inversedBy="users")
+     * @Assert\NotBlank()
      */
     private $role;
 

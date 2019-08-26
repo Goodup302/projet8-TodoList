@@ -11,14 +11,15 @@
     - Ajouter un system de role ✔
     - Lors de la modification d’un utilisateur, il est également possible de changer le rôle d’un utilisateur. ✔
 
-# Autorisation
+
+# Autorisation :heavy_check_mark:
     - Roles:
         - ROLE_USER (Default role) ✔
         - ROLE_ADMIN ✔
         - ANONYMOUS ✔
     - Gestion des utilisateurs réserver à (ROLE_ADMIN). ✔
     - Les tâches rattachées à l’utilisateur “anonyme” ne peuvent être supprimées uniquement par (ROLE_ADMIN). ✔
-    - Les tâches ne peuvent être supprimées que par les utilisateurs ayant créé les tâches en questions. ✔
+    - Les tâches ne peuvent être supprimées/éditées que par les utilisateurs ayant créé les tâches en questions. ✔
     - Empécher la connection des utilisateures ANONYMOUS. ✔
    
 
