@@ -107,4 +107,13 @@ class Task
 
         return $this;
     }
+
+    public function canEditBy($user): bool
+    {
+        /** @var User $user */
+        $userTask = $this->getUser();
+        if ($userTask->getId() === $user->getId()) return true;
+        if ($user->getRoleName() === Role::ADMIN && $userTask->getRoleName() === Role::ANONYMOUS) return true;
+        return false;
+    }
 }

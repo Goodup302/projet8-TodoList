@@ -1,7 +1,10 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Role;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 
 trait TestsInjections
 {
@@ -16,33 +19,58 @@ trait TestsInjections
      */
     public $clientNotLog;
 
-    public function getClient($args = []): KernelBrowser
+    /**
+     * @var $client KernelBrowser
+     */
+    private $client;
+
+    public function getRepository(string $name): ObjectRepository
     {
-        return static::createClient([], $args);
+        $kernel = self::bootKernel();
+        return $this->em = $kernel->getContainer()
+            ->get('doctrine')
+            ->getManager()->getRepository($name);
     }
 
-    public function getClientLogged(): KernelBrowser
+    public function getClientLogged($role = Role::ADMIN): KernelBrowser
     {
-        if (!$this->clientAuth) $this->clientAuth = $this->getClient([
+        $user = ($role === Role::ADMIN) ? [
             'PHP_AUTH_USER' => 'admin',
             'PHP_AUTH_PW'   => 'admin',
-        ]);
+        ]:[
+            'PHP_AUTH_USER' => 'User 1',
+            'PHP_AUTH_PW'   => 'admin',
+        ];
+        $this->clientAuth = static::createClient([], $user);
         return $this->clientAuth;
     }
 
     public function getClientNotLog(): KernelBrowser
     {
-        if (!$this->clientNotLog) $this->clientNotLog = $this->getClient();
+        if (!$this->clientNotLog) $this->clientNotLog = static::createClient();
         return $this->clientNotLog;
     }
 
     /**
-     * @param $route
-     * Get if root is disable for not logged user
+     * Get if route is disable for not logged user
      */
-    public function assertSafeRoute($route)
+    public function assertSafeRoute(string $route, string $redirectRoute = '/login')
     {
-        $this->clientNotLog->request('GET', $route);
+        $crawler = $this->clientNotLog->request('GET', $route);
         $this->assertEquals(302, $this->clientNotLog->getResponse()->getStatusCode());
+        $this->assertSame($redirectRoute, $crawler->filter('a')->text());
+    }
+
+    /**
+     * Check route for logged user
+     */
+    public function assertCheckRoute(string $route, int $code = 200, string $redirectRoute = "/login"): Crawler
+    {
+        $crawler = $this->clientAuth->request('GET', $route);
+        $this->assertEquals($code, $this->clientAuth->getResponse()->getStatusCode());
+        if ($code == 302) {
+            $this->assertSame($redirectRoute, $crawler->filter('a')->text());
+        }
+        return $crawler;
     }
 }

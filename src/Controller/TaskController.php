@@ -28,12 +28,7 @@ class TaskController extends AbstractController
      */
     public function indexAction()
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('task_list');
-        } else {
-            return $this->redirectToRoute('login');
-        }
-
+        return $this->redirectToRoute('task_list');
     }
 
     /**
@@ -104,7 +99,7 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
-        if ($this->taskProtection($task)) {
+        if ($task->canEditBy($this->getUser())) {
             //Form
             $form = $this->createForm(TaskType::class, $task)->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -118,8 +113,9 @@ class TaskController extends AbstractController
                 'task' => $task,
             ]);
         } else {
-            return $this->redirect($request->headers->get('referer'));
+            $this->addFlash('error', self::PERMISSION_DENY);
         }
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -128,12 +124,14 @@ class TaskController extends AbstractController
      */
     public function toggleTaskAction(Task $task, Request $request)
     {
-        if ($this->taskProtection($task)) {
+        if ($task->canEditBy($this->getUser())) {
             $task->toggle(!$task->isDone());
             $this->em->flush();
             //Flash alert
             $status = $task->isDone() ? "faite" : "non terminée";
             $this->addFlash('success', "La tâche {$task->getTitle()} a bien été marquée comme $status.");
+        } else {
+            $this->addFlash('error', self::PERMISSION_DENY);
         }
         return $this->redirect($request->headers->get('referer'));
     }
@@ -144,22 +142,13 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task, Request $request)
     {
-        if ($this->taskProtection($task)) {
+        if ($task->canEditBy($this->getUser())) {
             $this->em->remove($task);
             $this->em->flush();
             $this->addFlash('success', 'La tâche a bien été supprimée.');
+        } else {
+            $this->addFlash('error', self::PERMISSION_DENY);
         }
         return $this->redirect($request->headers->get('referer'));
-    }
-
-    public function taskProtection(Task $task): bool
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userTask = $task->getUser();
-        if ($userTask->getId() === $user->getId()) return true;
-        if ($user->getRoleName() === Role::ADMIN && $userTask->getRoleName() === Role::ANONYMOUS) return true;
-        $this->addFlash('error', self::PERMISSION_DENY);
-        return false;
     }
 }

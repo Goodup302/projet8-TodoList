@@ -16,7 +16,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         $admin = new User();
         $admin->setEmail("admin@todolist.fr");
-        $admin->setPassword($this->encoder->encodePassword($admin, 'admin'));
+        $admin->setPassword($this->encoder->encodePassword($admin, static::$userPassword));
         $admin->setUsername("admin");
         $admin->setRole($this->getReference(Role::ADMIN));
         $this->setReference(self::class."0", $admin);
@@ -33,7 +33,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i < $this->iteration; $i++) {
             $user = new User();
             $user->setEmail("user.$i@todolist.fr");
-            $user->setPassword($this->encoder->encodePassword($user, 'admin'));
+            $user->setPassword($this->encoder->encodePassword($user, static::$userPassword));
             $user->setUsername("User $i");
             $user->setRole($this->getReference(Role::USER));
             $this->setReference(self::class.$i, $user);

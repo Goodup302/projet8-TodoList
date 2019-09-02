@@ -5,9 +5,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 trait FixturesInjection
 {
-    private $iteration = 5;
-    private $taskPerUser = 3;
-    private $encoder;
+    public $iteration = 5;
+    public $taskPerUser = 3;
+    public $encoder;
+    public static $userPassword = "admin";
 
     public function __construct(UserPasswordEncoderInterface $encoder)
     {

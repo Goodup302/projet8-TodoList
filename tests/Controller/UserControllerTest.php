@@ -2,29 +2,31 @@
 
 namespace App\Tests\Controller;
 
+use App\Tests\TestsInjections;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTest extends WebTestCase
 {
+    use TestsInjections;
 
-    public function listAction()
+    public function setUp()
     {
+        $this->getClientLogged();
+        $this->getClientNotLog();
+    }
+    public function testListUser()
+    {
+        $this->assertSafeRoute('/users');
         $client = static::createClient();
-        $crawler = $client->request('GET', '/login');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $client->request('GET', '/users');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
-    public function createAction()
-    {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/login');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-    }
-
-    public function editAction()
-    {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/login');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-    }
+//    public function testCreateUser()
+//    {
+//    }
+//
+//    public function testEditUser()
+//    {
+//    }
 }

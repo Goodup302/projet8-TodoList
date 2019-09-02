@@ -2,7 +2,10 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Role;
+use App\Entity\Task;
 use App\Tests\TestsInjections;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
@@ -15,39 +18,43 @@ class TaskControllerTest extends WebTestCase
         $this->getClientNotLog();
     }
 
-    public function testlistAction()
+    /**
+     * @dataProvider tasksListRoutes
+     */
+    public function testTaskList(string $route, string $role)
     {
-        $this->assertSafeRoute('/tasks');
-        $crawler = $this->clientAuth->request('GET', '/tasks');
-        $this->assertEquals(200, $this->clientAuth->getResponse()->getStatusCode());
+        $this->getClientLogged($role);
+        $this->assertCheckRoute($route);
+    }
+    public function tasksListRoutes() {
+        return [
+            ['/tasks', Role::USER],
+            ['/tasks/done', Role::USER],
+            ['/tasks/todo', Role::USER],
+            ['/tasks', Role::ADMIN],
+            ['/tasks/done', Role::ADMIN],
+            ['/tasks/todo', Role::ADMIN]
+        ];
     }
 
 //    public function testcreateAction()
 //    {
-//        $client = static::createClient();
-//        $crawler = $client->request('GET', '/task/create');
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//        $this->assertCheckRoute('/task/create');
 //    }
-//
+
 //    public function testeditAction()
 //    {
-//        $client = static::createClient();
-//        $crawler = $client->request('GET', '/task/0/edit');
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//        $this->assertCheckRoute('/task/0/edit');
 //    }
 //
 //    public function testtoggleTaskAction()
 //    {
-//        $client = static::createClient();
-//        $crawler = $client->request('GET', '/task/0/toggle');
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//        $this->assertCheckRoute('/task/0/toggle');
 //    }
 //
 //    public function testdeleteTaskAction()
 //    {
-//        $client = static::createClient();
-//        $crawler = $client->request('GET', '/task/0/delete');
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//        $this->assertCheckRoute('/task/0/delete');
 //    }
 //
 //    public function taskProtection()
@@ -56,4 +63,5 @@ class TaskControllerTest extends WebTestCase
 //        $crawler = $client->request('GET', '/login');
 //        $this->assertEquals(200, $client->getResponse()->getStatusCode());
 //    }
+
 }

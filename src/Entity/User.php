@@ -101,7 +101,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return [$this->getRole()->getName()];
+        return ($this->getRole()) ? [$this->getRoleName()] : [];
     }
 
     public function eraseCredentials()
@@ -115,7 +115,7 @@ class User implements UserInterface
 
     public function getRoleName(): ?String
     {
-        return $this->getRole()->getName();
+        return ($this->getRole()) ? $this->getRole()->getId() : null;
     }
 
     public function setRole(?Role $role): self

@@ -2,6 +2,11 @@
 
 namespace App\Tests\Controller;
 
+use App\DataFixtures\UserFixtures;
+use App\Entity\Role;
+use App\Entity\Task;
+use App\Entity\User;
+use App\Tests\TestsInjections;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -10,57 +15,72 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SecurityControllerTest extends WebTestCase
 {
-    /**
-     * @var $client KernelBrowser
-     */
-    private $client = null;
+
+    use TestsInjections;
+
+    private $loginButton = "Connection";
 
     public function setUp()
     {
         $this->client = static::createClient();
     }
 
-    public function testloginSuccess()
+    public function testLogout()
     {
-        $crawler = $this->client->request('GET', '/login');
-        $form = $crawler->selectButton('Connection')->form([
-            'username' => 'admin',
-            'password' => 'admin',
-        ], 'POST');
-        $crawler = $this->client->submit($form);
-        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('/tasks', $crawler->filter('a')->text());
+        $this->getClientLogged();
+        $crawler = $this->clientAuth->request('GET', '/logout');
+        $this->assertEquals(302, $this->clientAuth->getResponse()->getStatusCode());
     }
 
-    public function testloginFaild()
+    /**
+     * @dataProvider loginProvider
+     */
+    public function testLoginForm($data, $redirect)
     {
-        //$this->logIn();
         $crawler = $this->client->request('GET', '/login');
-        $form = $crawler->selectButton('Connection')->form([
-            'username' => 'wrong_username',
-            'password' => 'wrong_password',
-        ], 'POST');
+        $form = $crawler->selectButton($this->loginButton)->form($data,'POST');
         $crawler = $this->client->submit($form);
         $this->assertSame(302, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('/login', $crawler->filter('a')->text());
+        $this->assertSame($redirect, $crawler->filter('a')->text());
+    }
+    public function loginProvider() {
+        /** @var User $user */
+        $user = $this->getRepository(User::class)->findAll()[0];
+        $password = UserFixtures::$userPassword;
+        return [
+            [["username"=>$user->getUsername(), "password"=>$password],"/tasks"], //testloginSuccess
+            [["username"=>$user->getUsername(), "password"=>$password, "_csrf_token"=>""],"/login"], //testloginFaild
+            [["username"=>"wrong_username", "password"=>"wrong_password"],"/login"], //testloginTokenError
+        ];
     }
 
-    private function logIn()
+
+    /**
+     * @dataProvider routesProvider
+     */
+    public function testSecurityRoutes(string $route)
     {
-        $session = $this->client->getContainer()->get('session');
-
-        $firewallName = 'secure_area';
-        // if you don't define multiple connected firewalls, the context defaults to the firewall name
-        // See https://symfony.com/doc/current/reference/configuration/security.html#firewall-context
-        $firewallContext = 'secured_area';
-
-        // you may need to use a different token class depending on your application.
-        // for example, when using Guard authentication you must instantiate PostAuthenticationGuardToken
-        $token = new UsernamePasswordToken('admin', null, $firewallName, ['ROLE_ADMIN']);
-        $session->set('_security_'.$firewallContext, serialize($token));
-        $session->save();
-
-        $cookie = new Cookie($session->getName(), $session->getId());
-        $this->client->getCookieJar()->set($cookie);
+        $crawler = $this->client->request('GET', $route);
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame("/login", $crawler->filter('a')->text());
+    }
+    public function routesProvider() {
+        /** @var Task $task */
+        $task = $this->getRepository(Task::class)->findAll()[0];
+        /** @var User $user */
+        $user = $this->getRepository(User::class)->findAll()[0];
+        return [
+            ["/"],
+            ["/tasks"],
+            ["/tasks/done"],
+            ["/tasks/todo"],
+            ["/task/create"],
+            ["/task/{$task->getId()}/edit"],
+            ["/task/{$task->getId()}/toggle"],
+            ["/task/{$task->getId()}/delete"],
+            ["/users"],
+            ["/users/create"],
+            ["/users/{$user->getId()}/edit"],
+        ];
     }
 }
