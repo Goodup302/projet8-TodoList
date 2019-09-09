@@ -44,23 +44,22 @@ class TaskTest extends WebTestCase
 
 
     public function testPermission() {
-        //users
+        //Get users
         $defaultUser = $this->getRepository(User::class)->findOneBy(['role'=>Role::USER]);
         $adminUser = $this->getRepository(User::class)->findOneBy(['role'=>Role::ADMIN]);
         $anonymeUser = $this->getRepository(User::class)->findOneBy(['role'=>Role::ANONYMOUS]);
-        //Tasks
+        //Get Tasks
         $userTasks = $this->getRepository(Task::class)->findOneBy(['user'=>$defaultUser]);
         $adminTasks = $this->getRepository(Task::class)->findOneBy(['user'=>$adminUser]);
         $anonymeTasks = $this->getRepository(Task::class)->findOneBy(['user'=>$anonymeUser]);
 
-
-
+        //Assert $userTasks
         $this->assertSame(true, $userTasks->canEditBy($defaultUser));
         $this->assertSame(false, $userTasks->canEditBy($adminUser));
-
+        //Assert $adminTasks
         $this->assertSame(false, $adminTasks->canEditBy($defaultUser));
         $this->assertSame(true, $adminTasks->canEditBy($adminUser));
-
+        //Assert $anonymeTasks
         $this->assertSame(false, $anonymeTasks->canEditBy($defaultUser));
         $this->assertSame(true, $anonymeTasks->canEditBy($adminUser));
     }

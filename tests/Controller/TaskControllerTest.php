@@ -6,7 +6,9 @@ use App\Entity\Role;
 use App\Entity\Task;
 use App\Tests\TestsInjections;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class TaskControllerTest extends WebTestCase
 {
@@ -16,12 +18,13 @@ class TaskControllerTest extends WebTestCase
     {
         $this->getClientLogged();
         $this->getClientNotLog();
+        $this->setUpKernel();
     }
 
     /**
      * @dataProvider tasksListRoutes
      */
-    public function testTaskList(string $route, string $role)
+    public function testTaskRoutes(string $route, string $role)
     {
         $this->getClientLogged($role);
         $this->assertCheckRoute($route);
@@ -37,31 +40,60 @@ class TaskControllerTest extends WebTestCase
         ];
     }
 
-//    public function testcreateAction()
-//    {
-//        $this->assertCheckRoute('/task/create');
-//    }
 
-//    public function testeditAction()
-//    {
-//        $this->assertCheckRoute('/task/0/edit');
-//    }
-//
-//    public function testtoggleTaskAction()
-//    {
-//        $this->assertCheckRoute('/task/0/toggle');
-//    }
-//
-//    public function testdeleteTaskAction()
-//    {
-//        $this->assertCheckRoute('/task/0/delete');
-//    }
-//
-//    public function taskProtection()
-//    {
-//        $client = static::createClient();
-//        $crawler = $client->request('GET', '/login');
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-//    }
+    public function TestCreateAction()
+    {
+        $this->submitTaskForm("/task/create", "Ajouter", [
+            'task[title]' => 'created title',
+            'task[content]' => 'first content'
+        ]);
+    }
+
+    public function TestEditAction()
+    {
+        $this->setUpKernel();
+        $queryBuilder = $this->getRepository()->findOneBy(['user' => $this->sessionUser['admin']]);
+
+        $res = $queryBuilder->getQuery()->getSingleResult();
+        $id = $res['id'] + 1;
+        $this->submitTaskForm("/task/$id/edit", "Modifier", [
+            'task[title]' => 'edited title',
+            'task[content]' => 'content edited'
+        ]);
+    }
+
+    public function TestToggleAction()
+    {
+        $this->callTaskRoute("/task/$id/toggle");
+    }
+
+    public function TestDeleteAction()
+    {
+        $this->callTaskRoute("/task/$id/delete");
+    }
+
+
+    public function submitTaskForm(string $route, string $button = null, array $data = [])
+    {
+        $this->clientAuth->request('GET', $route);
+        $crawler = $this->clientAuth->submitForm($button, $data);
+        $this->CrudSuccess($crawler);
+    }
+
+    public function callTaskRoute(string $route)
+    {
+        $crawler = $this->clientAuth->request('POST', $route);
+        $this->CrudSuccess($crawler);
+    }
+
+    public function CrudSuccess(Crawler $crawler)
+    {
+        //Test Redidect to task list
+        $this->assertEquals(302, $this->clientAuth->getResponse()->getStatusCode());
+        $this->assertContains('tasks', $crawler->filter('a')->text());
+        //Test Alert message
+        $crawler = $this->clientAuth->request('GET', "/tasks");
+        $this->assertNotEmpty($crawler->filter('div.alert-success')->text());
+    }
 
 }

@@ -40,10 +40,8 @@ class TaskController extends AbstractController
         $user = $this->getUser();
         $repositoryTask = $this->getDoctrine()->getRepository(Task::class);
         if ($user->getRoleName() === Role::ADMIN) {
-            $repositoryRole = $this->getDoctrine()->getRepository(Role::class);
             $repositoryUser = $this->getDoctrine()->getRepository(User::class);
-            $anonymousRole = $repositoryRole->findOneBy(['name' => Role::ANONYMOUS]);
-            $anonymousUser = $repositoryUser->findOneBy(['role' => $anonymousRole]);
+            $anonymousUser = $repositoryUser->findOneBy(['role' => Role::ANONYMOUS]);
             $userFilter = [$user, $anonymousUser];
         } else {
             $userFilter = [$user];
@@ -115,7 +113,7 @@ class TaskController extends AbstractController
         } else {
             $this->addFlash('error', self::PERMISSION_DENY);
         }
-        return $this->redirect($request->headers->get('referer'));
+        return $this->getRedirectPostCrud($request);
     }
 
     /**
@@ -133,7 +131,7 @@ class TaskController extends AbstractController
         } else {
             $this->addFlash('error', self::PERMISSION_DENY);
         }
-        return $this->redirect($request->headers->get('referer'));
+        return $this->getRedirectPostCrud($request);
     }
 
     /**
@@ -149,6 +147,14 @@ class TaskController extends AbstractController
         } else {
             $this->addFlash('error', self::PERMISSION_DENY);
         }
-        return $this->redirect($request->headers->get('referer'));
+        return $this->getRedirectPostCrud($request);
+    }
+
+    public function getRedirectPostCrud(Request $request) {
+        if ($url = $request->headers->get('referer')) {
+            return $this->redirect($url);
+        } else {
+            return $this->redirectToRoute('task_list');
+        }
     }
 }

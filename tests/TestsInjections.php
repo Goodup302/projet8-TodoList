@@ -3,8 +3,10 @@ namespace App\Tests;
 
 use App\Entity\Role;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 trait TestsInjections
 {
@@ -24,23 +26,51 @@ trait TestsInjections
      */
     private $client;
 
+    /**
+     * @var $em EntityManager
+     */
+    private $em;
+
+    /**
+     * @var $kernel KernelInterface
+     */
+    private $_kernel;
+
+    /**
+     * @var $sessionUser array
+     */
+    private $sessionUser;
+
+    public function setUpKernel()
+    {
+        if (!$this->_kernel) {
+            $this->_kernel = self::bootKernel();
+            $this->em = $this->_kernel->getContainer()
+                ->get('doctrine')
+                ->getManager();
+        }
+    }
+    public function setUpUser()
+    {
+        $this->sessionUser['admin'] = [
+            'PHP_AUTH_USER' => 'admin',
+            'PHP_AUTH_PW'   => 'admin',
+        ];
+        $this->sessionUser['user'] = [
+            'PHP_AUTH_USER' => 'admin',
+            'PHP_AUTH_PW'   => 'admin',
+        ];
+    }
+
     public function getRepository(string $name): ObjectRepository
     {
-        $kernel = self::bootKernel();
-        return $this->em = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager()->getRepository($name);
+        $this->setUpKernel();
+        return $this->em->getRepository($name);
     }
 
     public function getClientLogged($role = Role::ADMIN): KernelBrowser
     {
-        $user = ($role === Role::ADMIN) ? [
-            'PHP_AUTH_USER' => 'admin',
-            'PHP_AUTH_PW'   => 'admin',
-        ]:[
-            'PHP_AUTH_USER' => 'User 1',
-            'PHP_AUTH_PW'   => 'admin',
-        ];
+        $user = ($role === Role::ADMIN) ? $this->sessionUser['admin'] : $this->sessionUser['user'];
         $this->clientAuth = static::createClient([], $user);
         return $this->clientAuth;
     }
