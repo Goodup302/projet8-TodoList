@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Role;
 use App\Entity\Task;
+use App\Entity\User;
 use App\Tests\TestsInjections;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -34,25 +35,31 @@ class TaskControllerTest extends WebTestCase
             ['/tasks', Role::USER],
             ['/tasks/done', Role::USER],
             ['/tasks/todo', Role::USER],
+            ['/task/create', Role::USER],
             ['/tasks', Role::ADMIN],
             ['/tasks/done', Role::ADMIN],
-            ['/tasks/todo', Role::ADMIN]
+            ['/tasks/todo', Role::ADMIN],
+            ['/task/create', Role::ADMIN],
         ];
     }
 
 
-    public function TestCreateAction()
+    public function testCreateAction()
     {
+        //todo get id of insert
         $this->submitTaskForm("/task/create", "Ajouter", [
             'task[title]' => 'created title',
             'task[content]' => 'first content'
         ]);
     }
 
-    public function TestEditAction()
+    /**
+     * @depends testCreateAction
+     */
+    public function testEditAction()
     {
         $this->setUpKernel();
-        $queryBuilder = $this->getRepository()->findOneBy(['user' => $this->sessionUser['admin']]);
+        $queryBuilder = $this->getRepository(Task::class)->findOneBy(['user' => $this->sessionUser['admin']]);
 
         $res = $queryBuilder->getQuery()->getSingleResult();
         $id = $res['id'] + 1;
@@ -62,16 +69,21 @@ class TaskControllerTest extends WebTestCase
         ]);
     }
 
-    public function TestToggleAction()
+    /**
+     * @depends testEditAction
+     */
+    public function testToggleAction()
     {
-        $this->callTaskRoute("/task/$id/toggle");
+        //$this->callTaskRoute("/task/$id/toggle");
     }
 
-    public function TestDeleteAction()
+    /**
+     * @depends testToggleAction
+     */
+    public function testDeleteAction()
     {
-        $this->callTaskRoute("/task/$id/delete");
+        //$this->callTaskRoute("/task/$id/delete");
     }
-
 
     public function submitTaskForm(string $route, string $button = null, array $data = [])
     {
@@ -88,6 +100,7 @@ class TaskControllerTest extends WebTestCase
 
     public function CrudSuccess(Crawler $crawler)
     {
+        print_r($crawler);
         //Test Redidect to task list
         $this->assertEquals(302, $this->clientAuth->getResponse()->getStatusCode());
         $this->assertContains('tasks', $crawler->filter('a')->text());
