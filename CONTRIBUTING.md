@@ -1,7 +1,13 @@
 Contributing
 ============
 
-The Symfony Demo application is an open source project. Contributions made by
-the community are welcome. Send us your ideas, code reviews, pull requests and
-feature requests to help us improve this project. All contributions must follow
-the [usual Symfony contribution requirements](https://symfony.com/doc/current/contributing/index.html).
+Pour contribuer au projet voici les étapes à suivre:
+- Cloner le projet
+- Créer une branche
+- Faire ses commits
+- Créé une pull request
+- Attendre la validation
+
+Pour qu'une pull request soit acceptée,
+vous devez respecter les PSR et l'architecture déjà existante,
+toutes les informations sont présentes dans la documentation technique.
