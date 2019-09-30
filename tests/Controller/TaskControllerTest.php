@@ -15,11 +15,18 @@ class TaskControllerTest extends WebTestCase
 {
     use TestsInjections;
 
+    public $tasks =[];
+
     public function setUp()
     {
         $this->getClientLogged();
         $this->getClientNotLog();
         $this->setUpKernel();
+    }
+
+    public function testindexAction()
+    {
+        $this->assertCheckRoute('/', 302, "/tasks");
     }
 
     /**
@@ -43,49 +50,70 @@ class TaskControllerTest extends WebTestCase
         ];
     }
 
-
     public function testCreateAction()
     {
-        //todo get id of insert
         $this->submitTaskForm("/task/create", "Ajouter", [
             'task[title]' => 'created title',
             'task[content]' => 'first content'
         ]);
     }
 
-    /**
-     * @depends testCreateAction
-     */
-    public function testEditAction()
-    {
-        $this->setUpKernel();
-        $queryBuilder = $this->getRepository(Task::class)->findOneBy(['user' => $this->sessionUser['admin']]);
 
-        $res = $queryBuilder->getQuery()->getSingleResult();
-        $id = $res['id'] + 1;
-        $this->submitTaskForm("/task/$id/edit", "Modifier", [
+
+    public function testEditSuccess()
+    {
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName('admin')->getId()]);
+        $this->submitTaskForm("/task/{$task->getId()}/edit", "Modifier", [
             'task[title]' => 'edited title',
             'task[content]' => 'content edited'
         ]);
     }
-
-    /**
-     * @depends testEditAction
-     */
-    public function testToggleAction()
+    public function testEditFailed()
     {
-        //$this->callTaskRoute("/task/$id/toggle");
+        $this->getClientLogged(Role::USER);
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName('admin')->getId()]);
+        $crawler = $this->clientAuth->request('GET', "/task/{$task->getId()}/edit");
+        $this->CrudFailed($crawler);
     }
 
-    /**
-     * @depends testToggleAction
-     */
-    public function testDeleteAction()
+
+
+    public function testToggleSuccess()
     {
-        //$this->callTaskRoute("/task/$id/delete");
+        $username = $this->sessionUser['admin']['PHP_AUTH_USER'];
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName($username)->getId()]);
+        $crawler = $this->clientAuth->request('GET', "/task/{$task->getId()}/toggle");
+        $this->CrudSuccess($crawler);
+    }
+    public function testToggleFailed()
+    {
+        $this->getClientLogged(Role::USER);
+        $username = $this->sessionUser['admin']['PHP_AUTH_USER'];
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName($username)->getId()]);
+        $crawler = $this->clientAuth->request('GET', "/task/{$task->getId()}/toggle");
+        $this->CrudFailed($crawler);
     }
 
-    public function submitTaskForm(string $route, string $button = null, array $data = [])
+
+
+    public function testDeleteSuccess()
+    {
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName('admin')->getId()]);
+        $crawler = $this->clientAuth->request('GET', "/task/{$task->getId()}/delete");
+        $this->CrudSuccess($crawler);
+    }
+    public function testDeleteFailed()
+    {
+        $this->getClientLogged(Role::USER);
+        $username = $this->sessionUser['admin']['PHP_AUTH_USER'];
+        $task = $this->getRepository(Task::class)->findOneBy(['user' => $this->getUserByName($username)->getId()]);
+        $crawler = $this->clientAuth->request('GET', "/task/{$task->getId()}/delete");
+        $this->CrudFailed($crawler);
+    }
+
+
+
+    public function submitTaskForm(string $route, string $button, array $data = [])
     {
         $this->clientAuth->request('GET', $route);
         $crawler = $this->clientAuth->submitForm($button, $data);
@@ -100,7 +128,6 @@ class TaskControllerTest extends WebTestCase
 
     public function CrudSuccess(Crawler $crawler)
     {
-        print_r($crawler);
         //Test Redidect to task list
         $this->assertEquals(302, $this->clientAuth->getResponse()->getStatusCode());
         $this->assertContains('tasks', $crawler->filter('a')->text());
@@ -109,4 +136,13 @@ class TaskControllerTest extends WebTestCase
         $this->assertNotEmpty($crawler->filter('div.alert-success')->text());
     }
 
+    public function CrudFailed(Crawler $crawler)
+    {
+        //Test Redidect to task list
+        $this->assertEquals(302, $this->clientAuth->getResponse()->getStatusCode());
+        $this->assertContains('tasks', $crawler->filter('a')->text());
+        //Test Alert message
+        $crawler = $this->clientAuth->request('GET', "/tasks");
+        $this->assertNotEmpty($crawler->filter('div.alert-danger')->text());
+    }
 }

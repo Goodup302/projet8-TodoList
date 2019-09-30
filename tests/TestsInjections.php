@@ -2,6 +2,7 @@
 namespace App\Tests;
 
 use App\Entity\Role;
+use App\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
@@ -66,6 +67,10 @@ trait TestsInjections
             'PHP_AUTH_USER' => 'User 1',
             'PHP_AUTH_PW'   => 'admin',
         ];
+    }
+    public function getUserByName($username)
+    {
+        return $this->getRepository(User::class)->findOneBy(['username' => $username]);
     }
 
     public function getRepository(string $name): ObjectRepository
