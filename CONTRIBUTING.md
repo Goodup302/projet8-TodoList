@@ -1,13 +1,13 @@
 Contributing
 ============
 
-Pour contribuer au projet voici les étapes à suivre:
-- Cloner le projet
-- Créer une branche
-- Faire ses commits
-- Créé une pull request
-- Attendre la validation
+To contribute to the project here are the steps to follow:
+- Clone the project
+- Create a branch
+- Make his commits
+- Created a pull request
+- Wait for validation
 
-Pour qu'une pull request soit acceptée,
-vous devez respecter les PSR et l'architecture déjà existante,
-toutes les informations sont présentes dans la documentation technique.
+For a pull request to be accepted,
+you must respect the PSR and the existing architecture,
+all information is present in the project documents.

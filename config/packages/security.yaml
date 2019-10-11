@@ -1,38 +1,28 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    encoders: # Permet de configurer l'encodeur des mots de passe
+        App\Entity\User: # Cible l'entité utilisateur
+            algorithm: auto # Choix du cryptage
 
-    encoders:
-        App\Entity\User:
-            algorithm: auto
-
-    providers:
+    providers: # permet d'associer l'authentification une entité et définir un attribut principal
         app_user_provider:
             entity:
-                class: App\Entity\User
-                property: username
+                class: App\Entity\User # entité ciblée
+                property: username # attributs ciblées attribution utilisé pour l' identifiant de connexion
 
-    firewalls:
-        dev:
+    firewalls: # gestion globale du pare-feu
+        dev: # permet de charger les assets et la debugbar sans être connecté
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             http_basic: ~
-            anonymous: true
+            anonymous: true # autorise la connexion en anonyme
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
-            logout:
-                path: logout
+            logout: #gestion de la déconnexion
+                path: logout # nom de la route pour se déconnecter
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
-    access_control:
+    access_control: # définis quel rôle peut accéder à quelle route
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/users, roles: ROLE_ADMIN }
         - { path: ^/, roles: [ROLE_ADMIN, ROLE_USER] }

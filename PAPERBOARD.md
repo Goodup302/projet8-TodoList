@@ -37,13 +37,13 @@
     - Code coverage soit supérieur à 70%. ✔
 
 
-# Documentation technique
-    - Destiner au prochain dévelopeur junior
-    - Comprendre quel(s) fichier(s) il faut modifier et pourquoi
-    - Comment s’opère l’authentification
-    - Où sont stockés les utilisateurs.
-    - Si d’autres informations vous semble importantes d’être mentionnées, n’hésitez pas à le faire.
-    - détailler le processus de qualité à utiliser ainsi que les règles à respecter
+# Documentation technique :heavy_check_mark:
+    - Destiner au prochain dévelopeur junior ✔
+    - Comprendre quel(s) fichier(s) il faut modifier et pourquoi ✔
+    - Comment s’opère l’authentification ✔
+    - Où sont stockés les utilisateurs. ✔
+    - Si d’autres informations vous semble importantes d’être mentionnées, n’hésitez pas à le faire. ✔
+    - détailler le processus de qualité à utiliser ainsi que les règles à respecter ❌
 
 
 # Audit de qualite du code & performance de l'application :heavy_check_mark:
@@ -52,14 +52,15 @@
     - Récupérer le plus de metrics possible ✔
 
 
-# Integration continue (CI)
+# Integration continue (CI) :x:
     - Configurer de l'intégration continue avec travis-ci
 
 
-# Livrables
-    - Lien vers Github
+# Livrables :x:
+    - Lien vers Github ✔
     - Créer un README ✔
     - Créé un markdown expliquant comment contribuer au projet ✔
-    - Documentation technique sur l’implémentation de l’authentification/autorisation (Format PDF)
+    - Documentation technique sur l’implémentation de l’authentification/autorisation (Format PDF) ❌
     - Les fichiers HTML de code coverage de PHPUnit (Couverture minimum de 70%) ✔
-    - Le rapport d’audit de qualité de code et de performance (Format PDF)
+    - Le rapport d’audit de qualité de code et de performance (Format PDF) ❌
+    - Diagrammes UML (diagrammes d’utilisation, de classe et de séquence) ❌

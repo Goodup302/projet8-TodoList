@@ -37,12 +37,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         $this->passwordEncoder = $passwordEncoder;
     }
 
+    //détecte si c'est une requête de soumission formulaire de d'authentification
     public function supports(Request $request)
     {
         return 'login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
+    //récupère les infos soumises par le formulaire de connexion
     public function getCredentials(Request $request)
     {
         $credentials = [
@@ -58,6 +60,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         return $credentials;
     }
 
+    //récupération de l'entité utilisateur
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
@@ -75,6 +78,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         return $user;
     }
 
+    //vérification du mot de passe
     public function checkCredentials($credentials, UserInterface $user)
     {
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
@@ -88,14 +92,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         return $credentials['password'];
     }
 
+    //redirection après succès de l'authentification
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-//        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-//            return new RedirectResponse($targetPath);
-//        }
         return new RedirectResponse($this->urlGenerator->generate('task_list'));
     }
 
+    //récupère l'url de connexion
     protected function getLoginUrl()
     {
         return $this->urlGenerator->generate('login');
