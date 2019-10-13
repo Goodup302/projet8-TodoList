@@ -1,71 +1,38 @@
-Vous vous adresserez à votre employeur.
+Vous vous adresserez à votre directeur technique
+
+Total: 20 minutes maximum
 
 
-Étape 1 : Contexte, Analyse, Organisation [10 minutes]
-
-    Contexte du projet:
-        Besoin: de dev les fonctionnaliter demandeées par le nouveau client
-
-        But: Mettre en place un cataloge de mobile de luxe
-
-        Par la suite: Ajouter des fonctionaliter en fonction des clients
-
-    Schémas UML:
-        - diagrammes d’utilisation
-        - séquence
-        - classe
-        - séquence
-        - modèle de données SQL (PHPStorm)
-
-    Organisation du projet:
-        - Découpage en tâches (Issue)
-        - Priorisation
-        - Les estimation
+Étape 1 : Présentation du contexte du projet, analyse du besoin & organisation du projet ~ 10 minutes
+    rappeler le contexte du projet (Reprise d'un projet)
+    Présenter les diagrammes UML et PHPSTORM
+    Présenter les issues, Pull request, branches et taches faites (Paperboard.MD)
 
 
 
-Étape 2 : Démo de l'API [5 minutes]
+Étape 2 : Démonstration de l'application ~ 5 minutes
 
-    Postman:
-        - Get token JWT
-        - Les routes
-        - Pagination
+    Présenter l'ensemble des fonctionnalités de l'application.‌
 
-    Documentation:
-        - http://127.0.0.1:8000/api
-        - http://127.0.0.1:8000/api?ui=re_doc
+    - audit de qualité
+
+    - audit de performance:
+        - Proposer des solution face a la dète technique.
 
 
 
-Étape 3 : Exécution [5 minutes]
+Étape 3 : Exécution ~ 5 minutes
 
-    Versionning Git:
-        - Pull request
-        - Branch
-        - Readme
+    présenter l’architecture de l’application (où sont les fichiers, et à quoi servent-ils)
 
-    Expliquer REST:
-        - Sérialisation
-        - Désérialisation
-        - Groupe
+    Présenter librairies Composer:
+        - security-bundle
+        - doctrine-fixtures-bundle
 
-        - Ressourses
-        - Serialization
-        - Modèle Richardson
-        - Requette Sans état
-        - Méthode HTTP
-        - Réponse HTTP (Code, Headers)
-        - Cache
+    - présenter La documentation technique
+    - présenter le codecoverage
 
-    librairies:
-        - Faker | Pour les fixtures
-        - API Platform | intégratioin REST
-        - Swagger | Pour la documentation
-        - Jwt-authentication-bundle | Auth
-
-    Analyse Codeclimate:
-
-    Benchmark BlackFire:
-        - Présenter les bench
-        - les comparaison
-        - les optomisation
+    Présenter fichiers markdown:
+        Readme
+        Paperboard
+        Contributing

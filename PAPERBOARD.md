@@ -1,5 +1,7 @@
-# MAJ Symfony :heavy_check_mark:
+# MAJ :heavy_check_mark:
     Mettre a jour symfony vers une version, stable 4.4 ✔
+    Mise à jour de bootstrap et des templates ✔
+    Mise a jour des icones ✔
 
 
 # Taches :heavy_check_mark:
@@ -43,7 +45,7 @@
     - Comment s’opère l’authentification ✔
     - Où sont stockés les utilisateurs. ✔
     - Si d’autres informations vous semble importantes d’être mentionnées, n’hésitez pas à le faire. ✔
-    - détailler le processus de qualité à utiliser ainsi que les règles à respecter ❌
+    - détailler le processus de qualité à utiliser ainsi que les règles à respecter ✔
 
 
 # Audit de qualite du code & performance de l'application :heavy_check_mark:
@@ -56,11 +58,11 @@
     - Configurer de l'intégration continue avec travis-ci
 
 
-# Livrables :x:
+# Livrables :heavy_check_mark:
     - Lien vers Github ✔
     - Créer un README ✔
     - Créé un markdown expliquant comment contribuer au projet ✔
-    - Documentation technique sur l’implémentation de l’authentification/autorisation (Format PDF) ❌
+    - Documentation technique sur l’implémentation de l’authentification/autorisation (Format PDF) ✔
     - Les fichiers HTML de code coverage de PHPUnit (Couverture minimum de 70%) ✔
-    - Le rapport d’audit de qualité de code et de performance (Format PDF) ❌
-    - Diagrammes UML (diagrammes d’utilisation, de classe et de séquence) ❌
+    - Le rapport d’audit de qualité de code et de performance (Format PDF) ✔
+    - Diagrammes UML (diagrammes d’utilisation, de classe et de séquence) ✔
