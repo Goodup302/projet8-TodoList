@@ -3,36 +3,53 @@ Vous vous adresserez à votre directeur technique
 Total: 20 minutes maximum
 
 
-Étape 1 : Présentation du contexte du projet, analyse du besoin & organisation du projet ~ 10 minutes
-    rappeler le contexte du projet (Reprise d'un projet)
-    Présenter les diagrammes UML et PHPSTORM
-    Présenter les issues, Pull request, branches et taches faites (Paperboard.MD)
+~ 10 minutes
+Étape 1 : Présentation du contexte du projet, analyse du besoin & organisation du projet
+
+    Contexte du projet:
+        - Je vient d'ètre emboché chez ToDo & Co
+        - Reprise d'un projet (Minimum Viable Product ou MVP)
+
+    Tache a réaliser:
+        - l’implémentation de nouvelles fonctionnalités
+        - correction d'anomalies
+        - Tests automatisé.
+
+    - Présenter les diagrammes UML et PHPSTORM
+
+    GIT:
+         - issues
+         - Pull request
+         - branches
+         - taches faites (Paperboard.MD)
 
 
+~ 5 minutes
+Étape 2 : Démonstration de l'application
 
-Étape 2 : Démonstration de l'application ~ 5 minutes
-
-    Présenter l'ensemble des fonctionnalités de l'application.‌
+    - démo de toute l'app
 
     - audit de qualité
 
-    - audit de performance:
-        - Proposer des solution face a la dète technique.
+    - audit de performance
+
+    - Proposer des solution face à la dète technique.
 
 
+~ 5 minutes
+Étape 3 : Exécution
 
-Étape 3 : Exécution ~ 5 minutes
-
-    présenter l’architecture de l’application (où sont les fichiers, et à quoi servent-ils)
+    - présenter l’architecture de l’application (où sont les fichiers, et à quoi servent-ils)
 
     Présenter librairies Composer:
         - security-bundle
         - doctrine-fixtures-bundle
 
     - présenter La documentation technique
+
     - présenter le codecoverage
 
     Présenter fichiers markdown:
-        Readme
-        Paperboard
-        Contributing
+        - Readme
+        - Paperboard
+        - Contributing
